@@ -9,8 +9,8 @@ class car(BaseModel):
     transmission: str | None = "auto"
 
 
-def load_db() -> list[Car]:
+def load_db() -> list[car]:
     ''' Load a list of car objects from a json file '''
-    with open("cars.json") as f:
-        return [Car.parse_obj(obj) for obj in json.load(f)]
+    with open("cars_json.json") as f:
+        return [car.parse_obj(obj) for obj in json.load(f)]
 

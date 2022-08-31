@@ -1,39 +1,27 @@
-from fastapi import FastAPI
+import uvicorn
+from fastapi import FastAPI, HTTPException
 from datetime import datetime
+from schemas import load_db
+
 app = FastAPI()
 
-
-db =  [
-        {"id":1, "size": "s", "fuel": "gasoline", "doors": 3, "transmission": "auto"},
-        {"id":2, "size": "s", "fuel": "electric", "doors": 3, "transmission": "auto"},
-        {"id":3, "size": "s", "fuel": "hybrid", "doors": 5, "transmission": "manual"},
-        {"id":4, "size": "m", "fuel": "eletric", "doors": 5, "transmission": "manual"},
-        {"id":5, "size": "m", "fuel": "gasoline", "doors": 3, "transmission": "auto"},
-        {"id":6, "size": "m", "fuel": "gasoline", "doors": 3, "transmission": "manual"},
-        {"id":7, "size": "l", "fuel": "hybird", "doors": 5, "transmission": "auto"},
-        {"id":8, "size": "l", "fuel": "eletric", "doors": 5, "transmission": "auto"},
-        {"id":9, "size": "l", "fuel": "hybrid", "doors": 5, "transmission": "manual"},
-        {"id":1, "size": "s", "fuel": "gasoline", "doors": 3, "transmission": "auto"}
-        ]
-# Please add an operation call get_cars()
-#That is served at /api/cars
-#And return all car data
+db = load_db()
 
 @app.get("/api/cars/")
 def get_cars(size: str|None = None, doors: int|None = None) -> list:
     ''' Return details of cars available '''
     result = db
     if size:
-        result = [car for car in result if car['size'] == size ]
+        result = [car for car in result if car.size == size ]
     if doors:
         #doors = int(doors)
-        result = [ car for car in result if car['doors'] == doors ]
+        result = [ car for car in result if car.doors == doors ]
 
     return result
 
 @app.get("/api/cars/{id}")
 def car_by_id(id: int) -> dict:
-    result = [car for car in db if car["id"] == id ]
+    result = [car for car in db if car.id == id ]
     if result:
         return result[0]
     else:
