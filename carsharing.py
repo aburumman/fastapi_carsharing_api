@@ -20,16 +20,25 @@ db =  [
 #And return all car data
 
 @app.get("/api/cars/")
-def get_cars(size: str|None = None, doors: str|None = None) -> list:
+def get_cars(size: str|None = None, doors: int|None = None) -> list:
     ''' Return details of cars available '''
     result = db
     if size:
-        result = [car for car in results if car['size'] == size ]
+        result = [car for car in result if car['size'] == size ]
     if doors:
-        doors = int(doors)
-        result = [ car for car in results if car['doors'] == doors ]
+        #doors = int(doors)
+        result = [ car for car in result if car['doors'] == doors ]
 
     return result
+
+@app.get("/api/cars/{id}")
+def car_by_id(id: int) -> dict:
+    result = [car for car in db if car["id"] == id ]
+    if result:
+        return result[0]
+    else:
+        raise HTTPException(status_code=404, details= f" {id} not in car data")
+
         
 
 @app.get("/api/car/")
@@ -47,3 +56,6 @@ def welcome(name):
 def date():
     ''' Return friendly welcome message '''
     return {'date': datetime.now()}
+
+if __name__ == '__main__':
+    uvicorn.run("carsharing:app", reload=True)
