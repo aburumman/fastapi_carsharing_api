@@ -1,7 +1,7 @@
 import uvicorn
 from fastapi import FastAPI, HTTPException
 from datetime import datetime
-from schemas import load_db
+from schemas import load_db, CarInput, save_db, CarOutput
 
 app = FastAPI()
 
@@ -44,6 +44,16 @@ def welcome(name):
 def date():
     ''' Return friendly welcome message '''
     return {'date': datetime.now()}
+
+@app.post("/api/cars/", response_model = CarOutput)
+def add_car(car: CarInput) -> CarOutput:
+    new_car = CarOutput(size=car.size, doors=car.doors,
+            fuel=car.fuel, transmission=car.transmission,
+            id=len(db)+1)
+    db.append(new_car)
+    save_db(db)
+    return new_car
+
 
 if __name__ == '__main__':
     uvicorn.run("carsharing:app", reload=True)
